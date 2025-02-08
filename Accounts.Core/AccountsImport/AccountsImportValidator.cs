@@ -6,6 +6,9 @@ namespace Accounts.Core.AccountsImport
     {
         public string? ValidateAccountLine(string line, int lineNumber)
         {
+            using var activity = Diagnostics.ActivitySource.StartActivity($"{nameof(ValidateAccountLine)} {lineNumber}");
+            activity?.SetTag("line", line);
+
             var lineParts = line.Split(' ');
 
             if (lineParts.Length != 2)
