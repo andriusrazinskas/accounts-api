@@ -1,4 +1,6 @@
 
+using Accounts.Core;
+
 namespace Accounts.WebApi
 {
     public class Program
@@ -7,6 +9,7 @@ namespace Accounts.WebApi
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Services.AddCoreDependencies();
             builder.Services.AddControllers();
             builder.Services.AddOpenApi();
 

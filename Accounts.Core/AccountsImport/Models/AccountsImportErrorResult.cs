@@ -1,4 +1,4 @@
 ﻿namespace Accounts.Core.AccountsImport.Models
 {
-    public record AccountsImportErrorResult(string[] InvalidLines) : IAccountsImportResult;
+    public record AccountsImportErrorResult(IReadOnlyCollection<string> InvalidLines) : IAccountsImportResult;
 }
