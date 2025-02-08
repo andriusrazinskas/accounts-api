@@ -18,10 +18,11 @@ namespace Accounts.WebApi.Tests
             var fileContent = new StringContent("Thomas 3299992\nRichard 3293982\nMichael 4113902p", Encoding.UTF8, "text/plain");
             var formData = new MultipartFormDataContent { { fileContent, "file", "test.txt" } };
 
-            var response = await _httpClient.PostAsync("/api/v1/accounts/import", formData);
+            var httpResponse = await _httpClient.PostAsync("/api/v1/accounts/import", formData);
+            var actualResponse = await httpResponse.Content.ReadFromJsonAsync<AccountsImportSuccess>();
 
-            Assert.Equal(HttpStatusCode.Created, response.StatusCode);
-            Assert.Equal(expectedResponse, await response.Content.ReadFromJsonAsync<AccountsImportSuccess>());
+            Assert.Equal(HttpStatusCode.Created, httpResponse.StatusCode);
+            Assert.Equal(expectedResponse, actualResponse);
         }
 
         [Fact]
@@ -29,13 +30,12 @@ namespace Accounts.WebApi.Tests
         {
             var expectedResponse = new AccountsImportError(
             [
-                "Account number - not valid for line 1 'Thomas 32999921'",
-                "Account name, account number - not valid for line 3 'XAEA-12 8293982'",
-                "Account number - not valid for line 4 'Rose 329a982'",
-                "Account number - not valid for line 5 'Bob 329398.'",
-                "Account name - not valid for line 6 'michael 3113902'"
+                "Account number - not valid for 1 line 'Thomas 32999921'",
+                "Account name, account number - not valid for 3 line 'XAEA-12 8293982'",
+                "Account number - not valid for 4 line 'Rose 329a982'",
+                "Account number - not valid for 5 line 'Bob 329398.'",
+                "Account name - not valid for 6 line 'michael 3113902'"
             ]);
-
             var fileContent = new StringContent("Thomas 32999921\n" + 
                                                 "Richard 3293982\n" + 
                                                 "XAEA-12 8293982\n" + 
@@ -46,10 +46,12 @@ namespace Accounts.WebApi.Tests
 
             var formData = new MultipartFormDataContent { { fileContent, "file", "test.txt" } };
 
-            var response = await _httpClient.PostAsync("/api/v1/accounts/import", formData);
+            var httpResponse = await _httpClient.PostAsync("/api/v1/accounts/import", formData);
+            var actualResponse = await httpResponse.Content.ReadFromJsonAsync<AccountsImportError>();
 
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-            Assert.Equal(expectedResponse, await response.Content.ReadFromJsonAsync<AccountsImportError>());
+            Assert.Equal(HttpStatusCode.BadRequest, httpResponse.StatusCode);
+            Assert.Equal(expectedResponse.FileValid, actualResponse?.FileValid);
+            Assert.Equal(expectedResponse.InvalidLines, actualResponse?.InvalidLines);
         }
     }
 }
