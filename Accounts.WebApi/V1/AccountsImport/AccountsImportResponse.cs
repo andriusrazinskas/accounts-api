@@ -1,6 +1,6 @@
 ﻿namespace Accounts.WebApi.V1.AccountsImport
 {
-    public record AccountsImportSuccess
+    public record AccountsImportResponse
     {
         public bool FileValid => true;
     }

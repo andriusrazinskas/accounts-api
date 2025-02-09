@@ -14,12 +14,12 @@ namespace Accounts.WebApi.Tests
         [Fact]
         public async Task ImportAccountsAsync_ReturnsCreatedResponse_WhenUploadingValidFileData()
         {
-            var expectedResponse = new AccountsImportSuccess();
+            var expectedResponse = new AccountsImportResponse();
             var fileContent = new StringContent("Thomas 3299992\nRichard 3293982\nMichael 4113902p", Encoding.UTF8, "text/plain");
             var formData = new MultipartFormDataContent { { fileContent, "file", "test.txt" } };
 
             var httpResponse = await _httpClient.PostAsync("/api/v1/accounts/import", formData);
-            var actualResponse = await httpResponse.Content.ReadFromJsonAsync<AccountsImportSuccess>();
+            var actualResponse = await httpResponse.Content.ReadFromJsonAsync<AccountsImportResponse>();
 
             Assert.Equal(HttpStatusCode.Created, httpResponse.StatusCode);
             Assert.Equal(expectedResponse, actualResponse);
@@ -28,7 +28,7 @@ namespace Accounts.WebApi.Tests
         [Fact]
         public async Task ImportAccountsAsync_ReturnsBadRequestResponse_WhenUploadingInvalidFileData()
         {
-            var expectedResponse = new AccountsImportError(
+            var expectedResponse = new AccountsImportErrorResponse(
             [
                 "Account number - not valid for 1 line 'Thomas 32999921'",
                 "Account name, account number - not valid for 3 line 'XAEA-12 8293982'",
@@ -47,7 +47,7 @@ namespace Accounts.WebApi.Tests
             var formData = new MultipartFormDataContent { { fileContent, "file", "test.txt" } };
 
             var httpResponse = await _httpClient.PostAsync("/api/v1/accounts/import", formData);
-            var actualResponse = await httpResponse.Content.ReadFromJsonAsync<AccountsImportError>();
+            var actualResponse = await httpResponse.Content.ReadFromJsonAsync<AccountsImportErrorResponse>();
 
             Assert.Equal(HttpStatusCode.BadRequest, httpResponse.StatusCode);
             Assert.Equal(expectedResponse.FileValid, actualResponse?.FileValid);

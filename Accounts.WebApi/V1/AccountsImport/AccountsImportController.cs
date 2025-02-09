@@ -7,8 +7,8 @@ namespace Accounts.WebApi.V1.AccountsImport
 {
     [ApiController]
     [Route("api/v1/accounts/import")]
-    [ProducesResponseType<AccountsImportSuccess>((int)HttpStatusCode.Created)]
-    [ProducesResponseType<AccountsImportError>((int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType<AccountsImportResponse>((int)HttpStatusCode.Created)]
+    [ProducesResponseType<AccountsImportErrorResponse>((int)HttpStatusCode.BadRequest)]
     public class AccountsImportController(IAccountsImporter accountsImporter) : ControllerBase
     {
         [HttpPost]
@@ -20,8 +20,8 @@ namespace Accounts.WebApi.V1.AccountsImport
 
             return result switch
             {
-                AccountsImportSuccessResult => Created(null as string, new AccountsImportSuccess()),
-                AccountsImportErrorResult errorResult => BadRequest(new AccountsImportError(errorResult.InvalidLines)),
+                AccountsImportSuccessResult => Created(null as string, new AccountsImportResponse()),
+                AccountsImportErrorResult errorResult => BadRequest(new AccountsImportErrorResponse(errorResult.InvalidLines)),
                 _ => throw new InvalidOperationException("Unexpected import result.")
             };
         }
